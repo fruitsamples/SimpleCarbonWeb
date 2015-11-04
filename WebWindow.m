@@ -59,7 +59,7 @@ OpenWebWindow( CFStringRef inString )
 	WindowRef		window;
 	OSStatus		err;
 	IBNibRef		nibRef;
-	HIViewRef		webView, contentView, root;
+	HIViewRef		webView, contentView;
 	HIRect			bounds;
 	
 	url = CFURLCreateWithString( NULL, inString, NULL );
@@ -81,11 +81,10 @@ OpenWebWindow( CFStringRef inString )
 	
 	// If you are using a non-composited window, you embed in the traditional
 	// root control, gotten via GetRootControl. Else you would just embed in the
-	// content view we already fetched above. Currently, this example is not using
+	// content view we already fetched above. Currently, this example is using
 	// a composited window.
 	
-	GetRootControl( window, &root );
-	HIViewAddSubview( root, webView );
+	HIViewAddSubview( contentView, webView );
 	HIViewSetVisible( webView, true );
 	
 	LoadURL( webView, url );
@@ -94,11 +93,9 @@ OpenWebWindow( CFStringRef inString )
 	// the absolute best way to do resize. If you are using a composited window, it
 	// becomes a requirement due to the way the HIView/WebKit glue works. In general,
 	// you want to do this in composited mode anyway because you avoid a double-draw,
-	// so it's a good practice to get into. This current example does not use a
-	// composited window, fyi.
+	// so it's a good practice to get into.
 
-	InstallControlEventHandler( contentView, ContentBoundsChanged, 1,
-			&kBoundsChangedEvent, webView, NULL );
+	InstallControlEventHandler( contentView, ContentBoundsChanged, 1, &kBoundsChangedEvent, webView, NULL );
 
 	ShowWindow( window );
 
